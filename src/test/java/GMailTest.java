@@ -25,8 +25,8 @@ public class GMailTest {
     private DraftsPage draftPage;
     private SentMailPage sentpage;
 
-    private String email = "**********";
-    private String password = "**********";
+    private String email = "*****";
+    private String password = "******";
 
     private String recipient = "ftsiganok@gmail.com";
     private String subject = UUID.randomUUID().toString();
@@ -100,8 +100,7 @@ public class GMailTest {
         sentpage.titleButtonClick();
         sentpage.logoutButtonClick();
         SentMailPage.openMainPage(driver);
-        sentpage.isLoggedOut(email);
-
+        Assert.assertTrue(sentpage.isLoggedOut(email),"User is not logged out.");
     }
 
     @AfterTest
