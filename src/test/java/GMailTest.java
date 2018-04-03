@@ -105,6 +105,6 @@ public class GMailTest {
 
     @AfterTest
     public void closeBrowser(){
-        DriverProvider.quitDriver(Browser.FIREFOX);
+        driver.quit();
     }
 }
