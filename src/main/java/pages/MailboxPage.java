@@ -58,9 +58,17 @@ public class MailboxPage extends AbstractPage {
     }
 
     public int draftsCount() {
-        int i  =  Integer.parseInt(draftsListElement.getText().replaceAll("[\\D]", ""));
-        //log.info(String.valueOf(i));
-        return i;
+        int result;
+        String draftsCountString = draftsListElement.getText().replaceAll("[\\D]", "");
+
+                if (draftsCountString.equals("") ) {
+                    result = 0;
+                } else {
+                    result  =  Integer.parseInt(draftsCountString);
+                }
+
+        return result;
+
     }
 
     public void setDraftFormCloseButtonClick() {

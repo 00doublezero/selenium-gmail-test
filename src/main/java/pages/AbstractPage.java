@@ -26,8 +26,5 @@ public abstract class AbstractPage {
         wait.until(ExpectedConditions.visibilityOf(input));
         input.sendKeys(text);
     }
-    public void refresh() {
-        //this.refresh();
-    }
 
 }

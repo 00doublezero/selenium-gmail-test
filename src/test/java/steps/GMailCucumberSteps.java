@@ -8,12 +8,12 @@ import cucumber.api.java.en.Then;
 import helpers.Browser;
 import helpers.DriverProvider;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 import pages.LoginPage;
 import pages.MailboxPage;
 
-public class GMailSteps {
+public class GMailCucumberSteps {
     private WebDriver driver;
 
     private LoginPage loginpage;
