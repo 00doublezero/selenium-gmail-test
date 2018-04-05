@@ -8,16 +8,14 @@ import cucumber.api.java.en.Then;
 import helpers.Browser;
 import helpers.DriverProvider;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 import pages.LoginPage;
-import pages.MailboxPage;
+import pages.MailboxMainPage;
 
 public class GMailCucumberSteps {
     private WebDriver driver;
 
     private LoginPage loginpage;
-    private MailboxPage mailbox ;
+    private MailboxMainPage mailbox ;
 
     @Before
     public void initBrowser() {
@@ -54,7 +52,7 @@ public class GMailCucumberSteps {
 
     @Then("^he can see '(.+)' in title of page$")
     public void checkMailbox(String email) {
-       mailbox = new MailboxPage(driver);
+       mailbox = new MailboxMainPage(driver);
        mailbox.IsMailbox(email);
     }
 

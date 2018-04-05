@@ -7,10 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import pages.DraftsPage;
-import pages.LoginPage;
-import pages.MailboxPage;
-import pages.SentMailPage;
+import pages.*;
 
 import java.util.UUID;
 
@@ -21,12 +18,13 @@ public class GMailTest {
     private Logger log = LoggerFactory.getLogger(GMailTest.class);
 
     private LoginPage loginpage;
-    private MailboxPage mailbox;
-    private DraftsPage draftPage;
-    private SentMailPage sentpage;
+    private MailboxMainPage mailbox;
+    private EmailsList emailsList;
+    private GoogleMainPage gmanpage;
+    private DraftWindow draftwin;
 
-    private String email = "***";
-    private String password = "***";
+    private String email = "vj1hao5g@gmail.com";
+    private String password = "WrerEDq9";
 
     private String recipient = "ftsiganok@gmail.com";
     private String subject = UUID.randomUUID().toString();
@@ -41,17 +39,17 @@ public class GMailTest {
 
     @Test(priority=1)
     public void login(){
-        LoginPage.openPage(driver);
+        //временно использовать driver.get()
+        //LoginPage.openPage(driver);
+        driver.get("https://www.google.com/gmail/");
         loginpage = new LoginPage(driver);
-
-
 
         loginpage.fillEmail(email);
         loginpage.pressEmailOrPhoneNextButton();
         loginpage.fillPassword(password);
         loginpage.pressPasswordNextButton();
 
-        mailbox = new MailboxPage(driver);
+        mailbox = new MailboxMainPage(driver);
         Assert.assertTrue(mailbox.IsMailbox(email),"Title not found. The page did not load.");
 
     }
@@ -63,44 +61,45 @@ public class GMailTest {
         draftsCountBeforeEditing = mailbox.draftsCount();
         mailbox.openDraft();
 
-        mailbox.fillInput(mailbox.getRecipientInput(),recipient);
-        mailbox.fillInput(mailbox.getSubjectboxInput(),subject);
-        mailbox.fillInput(mailbox.getEmailBodyInput(),mailBody);
+        draftwin = new DraftWindow(driver);
+
+        draftwin.fillInput(draftwin.getRecipientInput(),recipient);
+        draftwin.fillInput(draftwin.getSubjectboxInput(),subject);
+        draftwin.fillInput(draftwin.getEmailBodyInput(),mailBody);
 
         mailbox.waitUntilDraftSaved(draftsCountBeforeEditing);
-        mailbox.setDraftFormCloseButtonClick();
+        draftwin.setDraftFormCloseButtonClick();
 
-        DraftsPage.openPage(driver);
+        driver.get("https://mail.google.com/mail/#drafts");
 
-        draftPage = new DraftsPage(driver);
+        emailsList = new EmailsList(driver);
 
-        Assert.assertEquals(draftPage.currentDraft(subject).getText(),subject,"There is no such draft.");
+        Assert.assertEquals(emailsList.currentDraft(subject).getText(),subject,"There is no such draft.");
 
     }
 
     @Test(priority = 3)
     public void validateDraft() {
-        boolean result = false;
-        draftPage.currentDraft(subject).click();
-        Assert.assertTrue(draftPage.validateForm(recipient,subject,mailBody),"Draft form is not valid.");
+        emailsList.currentDraft(subject).click();
+        Assert.assertTrue(draftwin.validateForm(recipient,subject,mailBody),"Draft form is not valid.");
     }
 
     @Test(priority = 4)
     public void sendEmail() {
-        draftPage.sendEmail();
-        SentMailPage.openPage(driver);
+        draftwin.sendEmail();
+        mailbox.waitUntilMailWasSend();
+        driver.get("https://mail.google.com/mail/#sent");
 
-        Assert.assertEquals(draftPage.currentDraft(subject).getText(),subject,"The Email was not sent");
-        DraftsPage.openPage(driver);
-        Assert.assertFalse(draftPage.waitUntilElementDeleteFromDraft(subject),"The Email was not sent");
+        Assert.assertEquals(emailsList.currentDraft(subject).getText(),subject,"The Email was not sent");
     }
     @Test(priority = 5)
     public void logout() {
-        sentpage = new SentMailPage(driver);
-        sentpage.titleButtonClick();
-        sentpage.logoutButtonClick();
-        SentMailPage.openMainPage(driver);
-        Assert.assertTrue(sentpage.isLoggedOut(email),"User is not logged out.");
+        gmanpage = new GoogleMainPage(driver);
+        mailbox.titleButtonClick();
+        mailbox.logoutButtonClick();
+        //SentMailPage.openMainPage(driver);
+        driver.get("https://google.com");
+        Assert.assertTrue(gmanpage.isLoggedOut(email),"User is not logged out.");
     }
 
     @AfterTest

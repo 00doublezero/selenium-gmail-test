@@ -4,29 +4,43 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class DraftsPage extends MailboxPage {
+public class DraftWindow extends AbstractGmailInboxPage {
+
+    public DraftWindow(WebDriver driver) {
+        super(driver);
+    }
 
     @FindBy(css="colgroup+tbody div[role=\"button\"]")
     private WebElement sendEmailButton;
 
-    @FindBy(xpath="//*[@href='https://mail.google.com/mail/#sent']/../../../..")
-    private WebElement sentMailListElement;
+    @FindBy(css="[name=\"subjectbox\"]")
+    private WebElement subjectFields;
 
-    @FindBy(css="#link_vsm")
-    private WebElement messageWasSentLable;
+    @FindBy(css="textarea[name=\"to\"]")
+    private WebElement recipientInput;
 
-    private static final String DRAFTS_URL = "https://mail.google.com/mail/#drafts";
+    @FindBy(xpath="//input[@name='subjectbox']")
+    private WebElement subjectboxInput;
 
-    public static SentMailPage openPage(WebDriver driver) {
-        driver.get(DRAFTS_URL);
-        return new SentMailPage(driver);
+    @FindBy(css="[role=\"dialog\"] [role=\"textbox\"]")
+    private WebElement emailBodyInput;
+
+    @FindBy(css="[role=\"dialog\"] [src=\"images/cleardot.gif\"][id]:nth-child(3)")
+    private WebElement draftFormCloseButton;
+
+    public WebElement getRecipientInput() {
+        return this.recipientInput;
     }
 
-    public WebElement currentDraft(String subject){
-        return this.driver.findElement(By.xpath("//span[text()='"+subject+"']"));
+    public WebElement getSubjectboxInput() {
+        return this.subjectboxInput;
     }
+
+    public WebElement getEmailBodyInput() {
+        return this.emailBodyInput;
+    }
+
 
     public String getRecipientText() {
         return this.driver.findElement(By.cssSelector("[role=\"dialog\"] [email]")).getAttribute("email");
@@ -38,6 +52,15 @@ public class DraftsPage extends MailboxPage {
 
     public String getBodyText() {
         return this.driver.findElement(By.xpath("//*[@role='dialog']//*[@role='textbox']")).getText();
+    }
+
+
+    public boolean draftIsOpen() {
+        return subjectFields.isDisplayed();
+    }
+
+    public void setDraftFormCloseButtonClick() {
+        draftFormCloseButton.click();
     }
 
     public boolean validateForm(String recipient, String subject, String bodyText){
@@ -52,23 +75,8 @@ public class DraftsPage extends MailboxPage {
         return result;
     }
 
-    public DraftsPage(WebDriver driver) {
-        super(driver);
-    }
-
     public void sendEmail() {
         sendEmailButton.click();
-        wait.until(ExpectedConditions.visibilityOf(messageWasSentLable));
-    }
-    public void sentMailClick() {
-        wait.until(ExpectedConditions.elementToBeClickable(this.sentMailListElement));
-        this.sentMailListElement.click();
-
-    }
-
-    public boolean waitUntilElementDeleteFromDraft(String subject) {
-
-
-        return this.driver.findElements(By.xpath("//span[text()='"+subject+"']")).size() >0;
+        //wait.until(ExpectedConditions.visibilityOf(messageWasSentLable));
     }
 }
